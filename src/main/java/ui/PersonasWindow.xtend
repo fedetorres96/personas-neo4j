@@ -1,4 +1,4 @@
-package arena
+package ui
 
 import domain.Oficio
 import domain.Persona
@@ -18,14 +18,16 @@ import static extension arena.TableColumnBuilder.*
 import static extension org.uqbar.arena.xtend.ArenaXtendExtensions.*
 import domain.Relacion
 
-class PersonasWindow extends SimpleWindow<PersonasModel> {
+class PersonasWindow extends SimpleWindow<arena.PersonasModel> {
 
-	new(WindowOwner parent, PersonasModel model) {
+	new(WindowOwner parent, arena.PersonasModel model) {
 		super(parent, model)
 	}
 
 	override createFormPanel(Panel panel) {
+		
 		title = "Personas y Oficios"
+		taskDescription = "Ingrese los parámetros de búsqueda"
 
 		var panelPersonas = new Panel(panel)
 
