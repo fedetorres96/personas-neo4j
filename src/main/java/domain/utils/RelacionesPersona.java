@@ -1,4 +1,4 @@
-package repos;
+package domain.utils;
 
 import org.neo4j.graphdb.RelationshipType;
 

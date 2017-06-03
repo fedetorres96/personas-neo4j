@@ -2,8 +2,8 @@ package arena
 
 import org.uqbar.arena.Application
 import org.uqbar.commons.utils.ApplicationContext
-import repos.RepoPersonas
 import repos.RepoOficios
+import repos.RepoPersonas
 
 class PersonasApplication extends Application {
 	

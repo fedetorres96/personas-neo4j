@@ -1,4 +1,4 @@
-package arena
+package arena.utils
 
 import org.uqbar.arena.widgets.tables.Column
 import org.uqbar.arena.widgets.tables.Table

@@ -1,7 +1,8 @@
-package ui
+package arena
 
 import domain.Oficio
 import domain.Persona
+import domain.Relacion
 import org.uqbar.arena.layout.HorizontalLayout
 import org.uqbar.arena.widgets.Button
 import org.uqbar.arena.widgets.CheckBox
@@ -14,20 +15,18 @@ import org.uqbar.arena.widgets.tables.Table
 import org.uqbar.arena.windows.SimpleWindow
 import org.uqbar.arena.windows.WindowOwner
 
-import static extension arena.TableColumnBuilder.*
+import static extension arena.utils.TableColumnBuilder.*
 import static extension org.uqbar.arena.xtend.ArenaXtendExtensions.*
-import domain.Relacion
 
-class PersonasWindow extends SimpleWindow<arena.PersonasModel> {
+class PersonasWindow extends SimpleWindow<PersonasModel> {
 
-	new(WindowOwner parent, arena.PersonasModel model) {
+	new(WindowOwner parent, PersonasModel model) {
 		super(parent, model)
 	}
 
 	override createFormPanel(Panel panel) {
-		
+
 		title = "Personas y Oficios"
-		taskDescription = "Ingrese los parámetros de búsqueda"
 
 		var panelPersonas = new Panel(panel)
 
@@ -48,26 +47,31 @@ class PersonasWindow extends SimpleWindow<arena.PersonasModel> {
 
 		new Label(panelPersona).text = "Nombre y Apellido"
 		new TextBox(panelPersona) => [
-			value <=> "personaSeleccionada.nombre"
+			value <=> "nombre"
 			width = 150
 		]
 
 		new Label(panelPersona).text = "Fecha Nacimiento"
 		new TextBox(panelPersona) => [
-			value <=> "personaSeleccionada.fechaNacimiento"
+			value <=> "fecha"
 			width = 150
 		]
-		
+
 		val panelBotonera = new Panel(panel).layout = new HorizontalLayout
 
 		new Button(panelBotonera) => [
 			caption = "Actualizar persona"
 			onClick([modelObject.actualizarPersona])
 		]
-		
+
 		new Button(panelBotonera) => [
 			caption = "Buscar persona"
 			onClick([modelObject.buscarPersona])
+		]
+
+		new Button(panelBotonera) => [
+			caption = "Reiniciar"
+			onClick([modelObject.cargarPersonas])
 		]
 
 		var table = new Table<Persona>(panel, Persona) => [
@@ -110,9 +114,9 @@ class PersonasWindow extends SimpleWindow<arena.PersonasModel> {
 			value <=> "oficioSeleccionado"
 		]
 
-		table.buildColumn("Nombre", 150, "nombre")
+		table.buildColumn("Nombre", 200, "nombre")
 
-		table.buildColumn("Grado de destreza", 150, "gradoDestreza")
+		table.buildColumn("Grado de destreza", 50, "gradoDestreza")
 
 		new Button(panel) => [
 			caption = "Eliminar oficio"
@@ -127,7 +131,7 @@ class PersonasWindow extends SimpleWindow<arena.PersonasModel> {
 
 		new Label(panelRelaciones).text = "Persona"
 		new Selector(panelRelaciones) => [
-			items <=> "personas"
+			items <=> "relaciones"
 			value <=> "nuevaRelacion.persona"
 			width = 150
 		]
@@ -150,10 +154,10 @@ class PersonasWindow extends SimpleWindow<arena.PersonasModel> {
 		]
 
 		table.buildColumn("Persona", 200, "persona")
-		
-		table.buildColumn("Fiel", 100)
-			.bindContentsToProperty("esFiel")
-			.transformer = [ boolean esFiel | if (esFiel) "Si" else "No" ]
+
+		table.buildColumn("Fiel", 100).bindContentsToProperty("esFiel").transformer = [ boolean esFiel |
+			if(esFiel) "Si" else "No"
+		]
 
 		new Button(panel) => [
 			caption = "Eliminar relación"

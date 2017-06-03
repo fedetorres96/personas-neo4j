@@ -2,11 +2,11 @@ package repos
 
 import domain.Persona
 import java.util.Iterator
+import java.util.List
 import org.neo4j.graphdb.Label
 import org.neo4j.graphdb.Node
 
 import static extension domain.utils.NodeConverter.*
-import java.util.List
 
 class RepoPersonas extends RepoNeo4J<Persona> {
 
@@ -19,7 +19,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 				nodoPersona = graphDb.createNode
 				nodoPersona.addLabel(label)
 			} else {
-				nodoPersona = getNodoPersona(persona.id)
+				nodoPersona = graphDb.getNodeById(persona.id)
 			}
 
 			updatePersona(persona, nodoPersona)
@@ -31,14 +31,40 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 		}
 	}
 
-	def Node getNodoPersona(Long id) {
-		basicSearch("ID(p) = " + id).head
+	def Persona getByExample(Persona persona) {
+		val transaction = graphDb.beginTx
+		var Persona entity = null
+		try {
+			var Node nodoPersona = null
+
+			nodoPersona = graphDb.getNodeById(persona.id)
+			entity = nodoPersona.toPersona(true)
+
+			transaction.success
+
+		} finally {
+			cerrarTransaccion(transaction)
+		}
+
+		entity
 	}
 
 	def List<Persona> searchByExample(Persona persona) {
-		val params = "p.nombre = '" + persona.nombre + "' AND p.fechaNacimiento = '" + persona.fechaNacimiento + "'"
-		val nodos = basicSearch(params)
-		nodos.asList
+		val transaction = graphDb.beginTx
+		var personas = newArrayList
+		
+		try {
+			
+			val params = "p.nombre = '" + persona.nombre + "' AND p.fechaNacimiento = '" + persona.fechaNacimiento + "'"
+			val nodos = basicSearch(params)
+			personas.addAll(nodos.asList)
+			
+			transaction.success
+		} finally {
+			cerrarTransaccion(transaction)
+		}
+		
+		personas
 	}
 
 	def Iterator<Node> basicSearch(String where) {
@@ -49,8 +75,8 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 		nodePersona => [
 			setProperty("nombre", persona.nombre)
 			setProperty("fechaNacimiento", persona.fechaNacimiento)
-			relationships.forEach[delete]
 		]
+
 	}
 
 	override label() {
@@ -58,7 +84,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 	}
 
 	override asList(Iterator<Node> nodos) {
-		nodos.map[toPersona].toList
+		nodos.map[toPersona(false)].toList
 	}
 
 }

@@ -5,11 +5,11 @@ import domain.Persona
 import domain.Relacion
 import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
+import org.uqbar.commons.model.UserException
 import org.uqbar.commons.utils.ApplicationContext
 import org.uqbar.commons.utils.Observable
 import repos.RepoOficios
 import repos.RepoPersonas
-import org.uqbar.commons.model.UserException
 
 @Observable
 @Accessors
@@ -18,9 +18,12 @@ class PersonasModel {
 	RepoOficios repoOficios
 
 	List<Persona> personas
+	List<Persona> relaciones
 	List<Oficio> oficios
 
 	Persona personaSeleccionada
+	String nombre
+	String fecha
 
 	Oficio oficioSeleccionado
 	Oficio nuevoOficio
@@ -37,6 +40,7 @@ class PersonasModel {
 
 	def cargarPersonas() {
 		personas = repoPersonas.allInstances
+		relaciones = repoPersonas.allInstances
 		personaSeleccionada = new Persona
 		initRelacion
 	}
@@ -48,6 +52,8 @@ class PersonasModel {
 
 	def actualizarPersona() {
 		try {
+			personaSeleccionada.nombre = nombre
+			personaSeleccionada.fechaNacimiento = fecha
 			personaSeleccionada.validar
 			repoPersonas.saveOrUpdate(personaSeleccionada)
 		} catch (Exception e) {
@@ -56,13 +62,30 @@ class PersonasModel {
 			cargarPersonas
 		}
 	}
-	
-	def void buscarPersona(){
-		personas = repoPersonas.searchByExample(personaSeleccionada)
+
+	def void buscarPersona() {
+		val example = new Persona => [
+			it.nombre = nombre
+			fechaNacimiento = fecha
+		]
+		personas = repoPersonas.searchByExample(example)
+	}
+
+	def void setPersonaSeleccionada(Persona persona) {
+		if (persona != null) {
+			personaSeleccionada = repoPersonas.getByExample(persona)
+			nombre = persona.nombre
+			fecha = persona.fechaNacimiento
+		} else {
+			personaSeleccionada = null
+			nombre = ""
+			fecha = ""
+		}
 	}
 
 	def void agregarOficio() {
 		try {
+			validar
 			nuevoOficio.validar
 			personaSeleccionada.oficios.add(nuevoOficio)
 			initOficio
@@ -77,6 +100,7 @@ class PersonasModel {
 
 	def void agregarRelacion() {
 		try {
+			validar
 			nuevaRelacion.validar
 			personaSeleccionada.relaciones.add(nuevaRelacion)
 			initRelacion
@@ -97,4 +121,9 @@ class PersonasModel {
 		nuevoOficio = new Oficio
 	}
 
+	def void validar() {
+		if (personaSeleccionada == null) {
+			throw new Exception("Debes seleccionar una persona")
+		}
+	}
 }

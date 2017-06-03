@@ -1,12 +1,12 @@
 package repos
 
+import java.util.Iterator
+import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.neo4j.graphdb.GraphDatabaseService
-import org.neo4j.graphdb.Transaction
-import java.util.List
 import org.neo4j.graphdb.Label
 import org.neo4j.graphdb.Node
-import java.util.Iterator
+import org.neo4j.graphdb.Transaction
 
 @Accessors
 abstract class RepoNeo4J<T> {

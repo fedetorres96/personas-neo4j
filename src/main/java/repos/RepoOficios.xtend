@@ -1,11 +1,11 @@
 package repos
 
 import domain.Oficio
+import java.util.Iterator
+import org.neo4j.graphdb.Label
+import org.neo4j.graphdb.Node
 
 import static extension domain.utils.NodeConverter.*
-import org.neo4j.graphdb.Label
-import java.util.Iterator
-import org.neo4j.graphdb.Node
 
 class RepoOficios extends RepoNeo4J<Oficio> {
 

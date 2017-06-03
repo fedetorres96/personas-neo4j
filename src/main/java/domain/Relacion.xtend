@@ -13,7 +13,7 @@ class Relacion {
 	
 	def void validar(){
 		if ( persona == null ){
-			throw new Exception("Debe seleccionar una persona")
+			throw new Exception("No podés salir con null")
 		}
 	}
 	
