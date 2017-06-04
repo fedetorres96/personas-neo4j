@@ -7,6 +7,8 @@ import org.uqbar.commons.utils.Observable
 @Accessors
 class Oficio {
 
+	Long id
+	
 	String nombre
 
 	int gradoDestreza = 1
