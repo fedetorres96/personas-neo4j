@@ -99,7 +99,15 @@ class PersonasModel {
 	}
 
 	def void eliminarOficio() {
-		// TODO
+		try {
+			personaSeleccionada => [
+				it.oficios.remove(oficioSeleccionado)
+			]
+			repoPersonas.saveOrUpdate(personaSeleccionada)
+			firePropertyChanged(this, "personaSeleccionada")
+		} catch (Exception e) {
+			throw new UserException(e.message)
+		}
 	}
 
 	def void agregarRelacion() {
