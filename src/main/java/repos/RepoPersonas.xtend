@@ -69,6 +69,14 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 		nodePersona => [
 			setProperty("nombre", persona.nombre)
 			setProperty("fechaNacimiento", persona.fechaNacimiento)
+			
+			getRelationships(RelacionesPersona.TRABAJA_DE).forEach[it.delete]
+			
+			persona.oficios.forEach[oficio |
+				val Node nodoOficio = graphDb.getNodeById(oficio.id)
+				nodePersona.createRelationshipTo(nodoOficio, RelacionesPersona.TRABAJA_DE)
+				.setProperty("gradoDestreza", oficio.gradoDestreza as long)
+			]
 		]
 	}
 	

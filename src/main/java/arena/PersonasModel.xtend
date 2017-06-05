@@ -10,6 +10,7 @@ import org.uqbar.commons.utils.ApplicationContext
 import org.uqbar.commons.utils.Observable
 import repos.RepoOficios
 import repos.RepoPersonas
+import static org.uqbar.commons.model.ObservableUtils.*
 
 @Observable
 @Accessors
@@ -86,7 +87,15 @@ class PersonasModel {
 	}
 
 	def void agregarOficio() {
-		// TODO
+		try {
+			personaSeleccionada => [
+				it.oficios.add(nuevoOficio)
+			]
+			repoPersonas.saveOrUpdate(personaSeleccionada)
+			firePropertyChanged(this, "personaSeleccionada")
+		} catch (Exception e) {
+			throw new UserException(e.message)
+		}
 	}
 
 	def void eliminarOficio() {

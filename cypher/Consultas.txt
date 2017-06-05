@@ -7,6 +7,9 @@
     RETURN persona
 
 3. saber qué personas nacieron en un determinado año
+	MATCH (p:Persona) 
+	WHERE p.fechaNacimiento ends with '1982' 
+	RETURN p
 
 4. saber quiénes tienen un grado de destreza 9 ó 10 en algún oficio
 	MATCH (persona:Persona)-[trabajaDe:TRABAJA_DE ]->(oficio:Oficio)

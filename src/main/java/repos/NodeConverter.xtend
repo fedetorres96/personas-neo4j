@@ -28,8 +28,8 @@ class NodeConverter {
 
 	def static Oficio toOficio(Node nodeOficio) {
 		new Oficio => [
-			id = nodeOficio.getProperty("id", 0L) as Long
-			nombre = nodeOficio.getProperty("nombre", "") as String
+			id = nodeOficio.id
+			nombre = nodeOficio.getProperty("nombre") as String
 		]
 	}
 
@@ -37,8 +37,8 @@ class NodeConverter {
 		val nodoOficio = relacionOficio.endNode
 		
 		new Oficio => [
-			id = relacionOficio.id
-			nombre = nodoOficio.getProperty("nombre","") as String
+			id = nodoOficio.id
+			nombre = nodoOficio.getProperty("nombre") as String
 			gradoDestreza = (relacionOficio.getProperty("gradoDestreza", 0) as Long).intValue
 		]
 	}
