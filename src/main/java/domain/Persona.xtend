@@ -24,14 +24,20 @@ class Persona {
 		if (nombre.nullOrEmpty)
 			throw new Exception("El nombre no puede estar vacío")
 
-		val fechaHoy = new LocalDate
-		val fechaNacimiento = DateTimeFormat.forPattern("dd/MM/yyyy").parseLocalDate(fechaNacimiento)
+		val LocalDate fechaHoy = new LocalDate
+		var LocalDate nacimiento = null
 
-		if (fechaNacimiento > fechaHoy)
+		try {
+			nacimiento = DateTimeFormat.forPattern("dd/MM/yyyy").parseLocalDate(fechaNacimiento)
+		} catch (Exception e) {
+			throw new Exception("La fecha de nacimiento no tiene un formato válido")
+		}
+
+		if (nacimiento > fechaHoy)
 			throw new Exception("La fecha de nacimiento no puede ser futura")
 	}
-	
-	override toString(){
+
+	override toString() {
 		nombre
 	}
 

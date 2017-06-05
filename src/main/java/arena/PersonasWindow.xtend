@@ -25,7 +25,6 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 	}
 
 	override createFormPanel(Panel panel) {
-
 		title = "Personas y Oficios"
 
 		var panelPersonas = new Panel(panel)
@@ -75,7 +74,7 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 		]
 
 		var table = new Table<Persona>(panel, Persona) => [
-			numberVisibleRows = 7
+			numberVisibleRows = 5
 			items <=> "personas"
 			value <=> "personaSeleccionada"
 		]
@@ -109,14 +108,14 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 		]
 
 		var table = new Table<Oficio>(panel, Oficio) => [
-			numberVisibleRows = 10
+			numberVisibleRows = 5
 			items <=> "personaSeleccionada.oficios"
 			value <=> "oficioSeleccionado"
 		]
 
 		table.buildColumn("Nombre", 200, "nombre")
 
-		table.buildColumn("Grado de destreza", 50, "gradoDestreza")
+		table.buildColumn("Grado de destreza", 20, "gradoDestreza")
 
 		new Button(panel) => [
 			caption = "Eliminar oficio"
@@ -148,7 +147,7 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 		]
 
 		var table = new Table<Relacion>(panel, Relacion) => [
-			numberVisibleRows = 10
+			numberVisibleRows = 5
 			items <=> "personaSeleccionada.relaciones"
 			value <=> "relacionSeleccionada"
 		]

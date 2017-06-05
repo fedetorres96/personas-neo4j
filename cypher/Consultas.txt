@@ -1,0 +1,22 @@
+1. conocer cuáles son las personas infieles
+	MATCH (persona:Persona)-[saleCon:SALE_CON{ esFiel: false }]->(otraPersona:Persona) 
+    RETURN persona
+
+2. saber qué personas ejercen un determinado oficio
+	MATCH (persona:Persona)-[trabajaDe:TRABAJA_DE ]->(oficio:Oficio {nombre: 'nombreOficio'}) 
+    RETURN persona
+
+3. saber qué personas nacieron en un determinado año
+
+4. saber quiénes tienen un grado de destreza 9 ó 10 en algún oficio
+	MATCH (persona:Persona)-[trabajaDe:TRABAJA_DE ]->(oficio:Oficio)
+	WHERE trabajaDe.gradoDestreza = 9 OR trabajaDe.gradoDestreza =10
+    RETURN persona
+    
+5. saber quiénes son hipócritas: están saliendo con más de 1 persona pero se
+consideran fieles
+
+
+
+
+

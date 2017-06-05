@@ -1,0 +1,13 @@
+CREATE ( Mauro: Persona{ nombre:"Mauro Icardi", fechaNacimiento:"19/02/1993" } )
+CREATE ( Maxi: Persona{ nombre:"Maximiliano Lopez", fechaNacimiento:"03/04/1984" } )
+CREATE ( Wanda: Persona{ nombre:"Wanda Nara", fechaNacimiento:"10/12/1986" } )
+
+CREATE ( Jugador: Oficio{ nombre:"Jugador"} )
+CREATE ( Botinera: Oficio{ nombre:"Botinera"} )
+
+CREATE
+(Mauro)-[:TRABAJA_DE{ gradoDestreza:8 }]->(Jugador),
+(Maxi)-[:TRABAJA_DE{ gradoDestreza:7 }]->(Jugador),
+(Wanda)-[:TRABAJA_DE{ gradoDestreza:8 }]->(Botinera),
+(Mauro)-[:SALE_CON{ esFiel:true } ]->(Wanda),
+(Wanda)-[:SALE_CON{ esFiel:false } ]->(Maxi)

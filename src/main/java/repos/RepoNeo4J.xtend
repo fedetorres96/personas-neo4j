@@ -13,26 +13,33 @@ abstract class RepoNeo4J<T> {
 	
 	GraphDatabaseService graphDb = GraphDatabaseProvider.instance.graphDb
 
-	def void cerrarTransaccion(Transaction transaction) {
-		if (transaction != null) {
+	def List<T> allInstances() {
+		val transaction = openTransaction
+		var List<T> entities = newArrayList
+		
+		try {
+			entities.addAll(getNodos.asList)
+			transaction.success
+		} finally {
 			transaction.close
 		}
-	}
-	
-	def List<T> allInstances() {
-		val transaction = graphDb.beginTx
-		try {
-			nodos.asList
-		} finally {
-			cerrarTransaccion(transaction)
-		}
+		
+		entities
 	}
 	
 	def Iterator<Node> getNodos(){
-		graphDb.execute("match (e:"+ label +") return e").columnAs("e")
+		graphDb.execute("match (n:"+ label +") return n").columnAs("n")
+	}
+	
+	def Iterator<Node> getNodosBy(String where) {
+		graphDb.execute("match (n:"+ label +") where " + where + " return n").columnAs("n")
 	}
 	
 	def List<T> asList ( Iterator<Node> nodos )
 	
 	def Label label()
+	
+	def Transaction openTransaction(){
+		graphDb.beginTx
+	}
 }

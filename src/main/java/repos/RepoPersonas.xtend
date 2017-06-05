@@ -6,34 +6,34 @@ import java.util.List
 import org.neo4j.graphdb.Label
 import org.neo4j.graphdb.Node
 
-import static extension domain.utils.NodeConverter.*
+import static extension repos.NodeConverter.*
 
 class RepoPersonas extends RepoNeo4J<Persona> {
 
 	def void saveOrUpdate(Persona persona) {
-		val transaction = graphDb.beginTx
+		val transaction = openTransaction
+		
 		try {
 			var Node nodoPersona = null
 
 			if (persona.id == null) {
-				nodoPersona = graphDb.createNode
-				nodoPersona.addLabel(label)
+				nodoPersona = graphDb.createNode(label)
+				persona.id = nodoPersona.id
 			} else {
 				nodoPersona = graphDb.getNodeById(persona.id)
 			}
 
 			updatePersona(persona, nodoPersona)
 			transaction.success
-
-			persona.id = nodoPersona.id
 		} finally {
-			cerrarTransaccion(transaction)
+			transaction.close
 		}
 	}
 
 	def Persona getByExample(Persona persona) {
-		val transaction = graphDb.beginTx
+		val transaction = openTransaction
 		var Persona entity = null
+		
 		try {
 			var Node nodoPersona = null
 
@@ -41,34 +41,28 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 			entity = nodoPersona.toPersona(true)
 
 			transaction.success
-
 		} finally {
-			cerrarTransaccion(transaction)
+			transaction.close
 		}
 
 		entity
 	}
 
 	def List<Persona> searchByExample(Persona persona) {
-		val transaction = graphDb.beginTx
+		val transaction = openTransaction
 		var personas = newArrayList
 		
 		try {
-			
-			val params = "p.nombre = '" + persona.nombre + "' AND p.fechaNacimiento = '" + persona.fechaNacimiento + "'"
-			val nodos = basicSearch(params)
+			val params = "n.nombre = '" + persona.nombre + "' AND n.fechaNacimiento = '" + persona.fechaNacimiento + "'"
+			val nodos = getNodosBy(params)
 			personas.addAll(nodos.asList)
 			
 			transaction.success
 		} finally {
-			cerrarTransaccion(transaction)
+			transaction.close
 		}
 		
 		personas
-	}
-
-	def Iterator<Node> basicSearch(String where) {
-		graphDb.execute("match (p:Persona) where " + where + " return p").columnAs("p")
 	}
 
 	def void updatePersona(Persona persona, Node nodePersona) {
@@ -76,9 +70,8 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 			setProperty("nombre", persona.nombre)
 			setProperty("fechaNacimiento", persona.fechaNacimiento)
 		]
-
 	}
-
+	
 	override label() {
 		Label.label("Persona")
 	}

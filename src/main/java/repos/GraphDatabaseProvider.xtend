@@ -13,7 +13,6 @@ class GraphDatabaseProvider {
 	GraphDatabaseService graphDb
 	
 	private new() {
-		
 		graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(new File(PATH))
 	}
 	

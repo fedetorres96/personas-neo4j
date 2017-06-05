@@ -34,8 +34,11 @@ class PersonasModel {
 	new() {
 		repoPersonas = ApplicationContext.instance.getSingleton(RepoPersonas)
 		repoOficios = ApplicationContext.instance.getSingleton(RepoOficios)
+		
 		cargarPersonas
-		cargarOficios
+
+		oficios = repoOficios.allInstances
+		initOficio
 	}
 
 	def cargarPersonas() {
@@ -45,21 +48,19 @@ class PersonasModel {
 		initRelacion
 	}
 
-	def cargarOficios() {
-		oficios = repoOficios.allInstances
-		initOficio
-	}
-
-	def actualizarPersona() {
+	def void actualizarPersona() {
 		try {
-			personaSeleccionada.nombre = nombre
-			personaSeleccionada.fechaNacimiento = fecha
-			personaSeleccionada.validar
+			personaSeleccionada => [
+				it.nombre = nombre
+				it.fechaNacimiento = fecha
+				it.validar
+			]
+			
 			repoPersonas.saveOrUpdate(personaSeleccionada)
+			
+			cargarPersonas
 		} catch (Exception e) {
 			throw new UserException(e.message)
-		} finally {
-			cargarPersonas
 		}
 	}
 
@@ -68,6 +69,7 @@ class PersonasModel {
 			it.nombre = nombre
 			fechaNacimiento = fecha
 		]
+		
 		personas = repoPersonas.searchByExample(example)
 	}
 
@@ -84,33 +86,19 @@ class PersonasModel {
 	}
 
 	def void agregarOficio() {
-		try {
-			validar
-			nuevoOficio.validar
-			personaSeleccionada.oficios.add(nuevoOficio)
-			initOficio
-		} catch (Exception e) {
-			throw new UserException(e.message)
-		}
+		// TODO
 	}
 
 	def void eliminarOficio() {
-		personaSeleccionada.oficios.remove(oficioSeleccionado)
+		// TODO
 	}
 
 	def void agregarRelacion() {
-		try {
-			validar
-			nuevaRelacion.validar
-			personaSeleccionada.relaciones.add(nuevaRelacion)
-			initRelacion
-		} catch (Exception e) {
-			throw new UserException(e.message)
-		}
+		// TODO
 	}
 
 	def void eliminarRelacion() {
-		personaSeleccionada.relaciones.remove(relacionSeleccionada)
+		// TODO
 	}
 
 	def void initRelacion() {
