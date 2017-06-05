@@ -77,6 +77,14 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 				nodePersona.createRelationshipTo(nodoOficio, RelacionesPersona.TRABAJA_DE)
 				.setProperty("gradoDestreza", oficio.gradoDestreza as long)
 			]
+			
+			getRelationships(RelacionesPersona.SALE_CON).forEach[it.delete]
+			
+			persona.relaciones.forEach[relacion |
+				val Node nodoRelacion = graphDb.getNodeById(relacion.persona.id)
+				nodePersona.createRelationshipTo(nodoRelacion, RelacionesPersona.SALE_CON)
+				.setProperty("esFiel", relacion.esFiel as boolean)
+			]
 		]
 	}
 	

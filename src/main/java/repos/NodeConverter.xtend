@@ -49,6 +49,7 @@ class NodeConverter {
 		val startNode = relacionSaleCon.startNode
 		
 		new Relacion => [
+//			id = relacionSaleCon.id
 			persona = nodoOtraPersona.toPersona(false)
 			esFiel = if ( startNode.equals(nodoPersona) ) fidelidad else true
 		]

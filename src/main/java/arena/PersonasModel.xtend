@@ -111,11 +111,27 @@ class PersonasModel {
 	}
 
 	def void agregarRelacion() {
-		// TODO
+		try {
+			personaSeleccionada => [
+				it.relaciones.add(nuevaRelacion)
+			]
+			repoPersonas.saveOrUpdate(personaSeleccionada)
+			firePropertyChanged(this, "personaSeleccionada")
+		} catch (Exception e) {
+			throw new UserException(e.message)
+		}
 	}
 
 	def void eliminarRelacion() {
-		// TODO
+		try {
+			personaSeleccionada => [
+				it.relaciones.remove(relacionSeleccionada)
+			]
+			repoPersonas.saveOrUpdate(personaSeleccionada)
+			firePropertyChanged(this, "personaSeleccionada")
+		} catch (Exception e) {
+			throw new UserException(e.message)
+		}
 	}
 
 	def void initRelacion() {

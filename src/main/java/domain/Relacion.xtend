@@ -7,6 +7,8 @@ import org.uqbar.commons.utils.Observable
 @Accessors
 class Relacion {
 	
+//	Long id
+	
 	Persona persona
 	
 	boolean esFiel = false
