@@ -1,0 +1,7 @@
+MATCH (p:Persona)-[sale:SALE_CON]->(p2:Persona) 
+     WHERE (sale.esFiel == false) 
+     RETURN p ,sale, p2;
+
+
+MATCH (p:Persona)-[trabajaDe:TRABAJA_DE]->(o:Oficio {nombre: 'nombreOficio'}) 
+     RETURN p ,trabajaDe, o;
