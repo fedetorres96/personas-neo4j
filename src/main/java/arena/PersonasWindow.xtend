@@ -3,6 +3,7 @@ package arena
 import domain.Oficio
 import domain.Persona
 import domain.Relacion
+import org.uqbar.arena.bindings.NotNullObservable
 import org.uqbar.arena.layout.HorizontalLayout
 import org.uqbar.arena.widgets.Button
 import org.uqbar.arena.widgets.CheckBox
@@ -46,6 +47,7 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 
 		new Label(panelPersona).text = "Nombre y Apellido"
 		new TextBox(panelPersona) => [
+			
 			value <=> "nombre"
 			width = 150
 		]
@@ -58,14 +60,20 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 
 		val panelBotonera = new Panel(panel).layout = new HorizontalLayout
 
+		val elementSelectedNombre = new NotNullObservable("nombre")
+		val elementSelectedFecha = new NotNullObservable("fecha")
+
 		new Button(panelBotonera) => [
 			caption = "Actualizar persona"
 			onClick([modelObject.actualizarPersona])
+			bindEnabled(elementSelectedNombre) 
+			bindEnabled(elementSelectedFecha)
 		]
 
 		new Button(panelBotonera) => [
 			caption = "Buscar persona"
 			onClick([modelObject.buscarPersona])
+			//bindEnabled(elementSelectedFecha)
 		]
 
 		new Button(panelBotonera) => [
@@ -106,6 +114,13 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 			caption = "Agregar oficio"
 			onClick([modelObject.agregarOficio])
 		]
+		
+		val elementSelected = new NotNullObservable("relacionSeleccionada")
+
+		new Button(panel) => [
+			caption = "Eliminar oficio"
+			onClick([modelObject.eliminarOficio])
+			bindEnabled(elementSelected)
 
 		var table = new Table<Oficio>(panel, Oficio) => [
 			numberVisibleRows = 5
@@ -116,10 +131,7 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 		table.buildColumn("Nombre", 200, "nombre")
 
 		table.buildColumn("Grado de destreza", 20, "gradoDestreza")
-
-		new Button(panel) => [
-			caption = "Eliminar oficio"
-			onClick([modelObject.eliminarOficio])
+		
 		]
 	}
 
@@ -140,10 +152,17 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 			value <=> "nuevaRelacion.esFiel"
 			width = 50
 		]
-
+		
 		new Button(panel) => [
 			caption = "Agregar relación"
 			onClick([modelObject.agregarRelacion])
+		]
+		
+		val elementSelected = new NotNullObservable("relacionSeleccionada")
+		new Button(panel) => [
+			caption = "Eliminar relación"
+			onClick([modelObject.eliminarRelacion])
+			bindEnabled(elementSelected)
 		]
 
 		var table = new Table<Relacion>(panel, Relacion) => [
@@ -158,10 +177,6 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 			if(esFiel) "Si" else "No"
 		]
 
-		new Button(panel) => [
-			caption = "Eliminar relación"
-			onClick([modelObject.eliminarRelacion])
-		]
 	}
 
 	override addActions(Panel panel) {

@@ -3,6 +3,7 @@ package arena
 import domain.Oficio
 import domain.Persona
 import domain.Relacion
+import helpers.ErrorHelper
 import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.uqbar.commons.model.UserException
@@ -10,8 +11,8 @@ import org.uqbar.commons.utils.ApplicationContext
 import org.uqbar.commons.utils.Observable
 import repos.RepoOficios
 import repos.RepoPersonas
+
 import static org.uqbar.commons.model.ObservableUtils.*
-import helpers.ErrorHelper
 
 @Observable
 @Accessors
@@ -67,12 +68,14 @@ class PersonasModel {
 	}
 
 	def void buscarPersona() {
+		
 		val example = new Persona => [
 			it.nombre = nombre
 			fechaNacimiento = fecha
 		]
 
 		personas = repoPersonas.searchByExample(example)
+
 	}
 
 	def void setPersonaSeleccionada(Persona persona) {

@@ -53,7 +53,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 		var personas = newArrayList
 		
 		try {
-			val params = "n.nombre = '" + persona.nombre + "' AND n.fechaNacimiento = '" + persona.fechaNacimiento + "'"
+			val params = "n.nombre = '" + persona.nombre + "' OR n.fechaNacimiento = '" + persona.fechaNacimiento + "'"
 			val nodos = getNodosBy(params)
 			personas.addAll(nodos.asList)
 			
