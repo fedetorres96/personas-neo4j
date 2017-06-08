@@ -7,7 +7,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory
 
 @Accessors
 class GraphDatabaseProvider {
-	static String PATH = "/Users/as2/Documents/Neo4j/default.graphdb"
+	static String PATH = "/Users/favio/Documents/Neo4j/default.graphdb"
 	static GraphDatabaseProvider instance
 	
 	GraphDatabaseService graphDb

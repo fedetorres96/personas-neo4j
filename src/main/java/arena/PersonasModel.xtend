@@ -11,6 +11,7 @@ import org.uqbar.commons.utils.Observable
 import repos.RepoOficios
 import repos.RepoPersonas
 import static org.uqbar.commons.model.ObservableUtils.*
+import helpers.ErrorHelper
 
 @Observable
 @Accessors
@@ -35,7 +36,7 @@ class PersonasModel {
 	new() {
 		repoPersonas = ApplicationContext.instance.getSingleton(RepoPersonas)
 		repoOficios = ApplicationContext.instance.getSingleton(RepoOficios)
-		
+
 		cargarPersonas
 
 		oficios = repoOficios.allInstances
@@ -56,9 +57,9 @@ class PersonasModel {
 				it.fechaNacimiento = fecha
 				it.validar
 			]
-			
+
 			repoPersonas.saveOrUpdate(personaSeleccionada)
-			
+
 			cargarPersonas
 		} catch (Exception e) {
 			throw new UserException(e.message)
@@ -70,7 +71,7 @@ class PersonasModel {
 			it.nombre = nombre
 			fechaNacimiento = fecha
 		]
-		
+
 		personas = repoPersonas.searchByExample(example)
 	}
 
@@ -87,27 +88,27 @@ class PersonasModel {
 	}
 
 	def void agregarOficio() {
-		try {
-			personaSeleccionada => [
-				it.oficios.add(nuevoOficio)
-			]
-			repoPersonas.saveOrUpdate(personaSeleccionada)
-			firePropertyChanged(this, "personaSeleccionada")
-		} catch (Exception e) {
-			throw new UserException(e.message)
-		}
+		execute([prepareAgregarOficio]);
+		firePropertyChanged(this, "personaSeleccionada")
+	}
+	def void prepareAgregarOficio() {
+		personaSeleccionada => [
+			it.validarSeleccionado
+			it.oficios.add(nuevoOficio)
+		]
+		repoPersonas.saveOrUpdate(personaSeleccionada)
 	}
 
 	def void eliminarOficio() {
-		try {
-			personaSeleccionada => [
-				it.oficios.remove(oficioSeleccionado)
-			]
-			repoPersonas.saveOrUpdate(personaSeleccionada)
-			firePropertyChanged(this, "personaSeleccionada")
-		} catch (Exception e) {
-			throw new UserException(e.message)
-		}
+		execute([prepareEliminarOficio])
+		firePropertyChanged(this, "personaSeleccionada")
+	}
+	def void prepareEliminarOficio() {
+		personaSeleccionada => [
+			it.validarSeleccionado
+			it.oficios.remove(oficioSeleccionado)
+		]
+		repoPersonas.saveOrUpdate(personaSeleccionada)
 	}
 
 	def void agregarRelacion() {
@@ -146,5 +147,9 @@ class PersonasModel {
 		if (personaSeleccionada == null) {
 			throw new Exception("Debes seleccionar una persona")
 		}
+	}
+
+	def void execute(()=>void funcion) {
+		ErrorHelper.capturarUserError(funcion);
 	}
 }
