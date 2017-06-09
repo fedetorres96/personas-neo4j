@@ -4,7 +4,7 @@ import org.uqbar.commons.model.UserException
 
 class ErrorHelper {
 
-	def static void capturarError(()=>void funcion, String mensaje ) {
+	def static void capturarError(()=>void funcion, String mensaje) {
 		try {
 			funcion.apply();
 		} catch (Exception e) {
@@ -12,9 +12,9 @@ class ErrorHelper {
 		}
 	}
 
-	def static void mostrarError(boolean condicion, String error) {
+	def static void mostrarError(boolean condicion, String mensaje) {
 		if (condicion) {
-			throw new UserException(error)
+			throw new UserException(mensaje)
 		}
 	}
 

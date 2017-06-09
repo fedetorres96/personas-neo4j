@@ -34,13 +34,19 @@ abstract class RepoNeo4J<T> {
 	def Iterator<Node> getNodosBy(String where) {
 		graphDb.execute("match (n:" + label + ") where " + where + " return n").columnAs("n")
 	}
+	
+	def Node getNodoById(long id ){
+		graphDb.getNodeById(id)
+	}
+
+	def void saveOrUpdate(T entity)
 
 	def Transaction openTransaction() {
 		graphDb.beginTx
 	}
 
-	def List<T> asList(Iterator<Node> nodos)
-
 	def Label label()
+
+	def List<T> asList(Iterator<Node> nodos)
 
 }

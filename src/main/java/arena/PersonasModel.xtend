@@ -72,8 +72,6 @@ class PersonasModel {
 		]
 
 		personas = repoPersonas.searchByExample(example)
-		
-		personaSeleccionada = null
 	}
 
 	def void setPersonaSeleccionada(Persona persona) {
@@ -83,7 +81,6 @@ class PersonasModel {
 			fecha = persona.fechaNacimiento
 		} else {
 			personaSeleccionada = null
-			initParams
 		}
 	}
 

@@ -10,7 +10,7 @@ import static extension repos.NodeConverter.*
 
 class RepoPersonas extends RepoNeo4J<Persona> {
 
-	def void saveOrUpdate(Persona persona) {
+	override saveOrUpdate(Persona persona) {
 		val transaction = openTransaction
 
 		try {
@@ -20,7 +20,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 				nodoPersona = graphDb.createNode(label)
 				persona.id = nodoPersona.id
 			} else {
-				nodoPersona = graphDb.getNodeById(persona.id)
+				nodoPersona = getNodoById(persona.id)
 			}
 
 			updatePersona(persona, nodoPersona)
@@ -38,7 +38,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 		try {
 			var Node nodoPersona = null
 
-			nodoPersona = graphDb.getNodeById(persona.id)
+			nodoPersona = getNodoById(persona.id)
 			entity = nodoPersona.toPersona(true)
 
 			transaction.success
@@ -76,7 +76,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 			relationships.forEach[delete]
 
 			persona.oficios.forEach [ oficio |
-				val Node nodoOficio = graphDb.getNodeById(oficio.id)
+				val Node nodoOficio = getNodoById(oficio.id)
 								
 				nodePersona
 					.createRelationshipTo(nodoOficio, RelacionesPersona.TRABAJA_DE)
@@ -84,7 +84,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 			]
 
 			persona.relaciones.forEach [ relacion |	
-				val Node nodoRelacion = graphDb.getNodeById(relacion.persona.id)
+				val Node nodoRelacion = getNodoById(relacion.persona.id)
 				
 				nodePersona
 					.createRelationshipTo(nodoRelacion, RelacionesPersona.SALE_CON)
