@@ -24,6 +24,10 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 	new(WindowOwner parent, PersonasModel model) {
 		super(parent, model)
 	}
+	
+	
+	NotNullObservable personaSeleccionada = new NotNullObservable("personaSeleccionada")
+	
 
 	override createFormPanel(Panel panel) {
 		title = "Personas y Oficios"
@@ -47,7 +51,6 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 
 		new Label(panelPersona).text = "Nombre y Apellido"
 		new TextBox(panelPersona) => [
-			
 			value <=> "nombre"
 			width = 150
 		]
@@ -60,25 +63,14 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 
 		val panelBotonera = new Panel(panel).layout = new HorizontalLayout
 
-		val elementSelectedNombre = new NotNullObservable("nombre")
-		val elementSelectedFecha = new NotNullObservable("fecha")
-
 		new Button(panelBotonera) => [
 			caption = "Actualizar persona"
-			onClick([modelObject.actualizarPersona])
-			bindEnabled(elementSelectedNombre) 
-			bindEnabled(elementSelectedFecha)
+			onClick[modelObject.actualizarPersona]
 		]
 
 		new Button(panelBotonera) => [
 			caption = "Buscar persona"
-			onClick([modelObject.buscarPersona])
-			//bindEnabled(elementSelectedFecha)
-		]
-
-		new Button(panelBotonera) => [
-			caption = "Reiniciar"
-			onClick([modelObject.cargarPersonas])
+			onClick[modelObject.buscarPersona]
 		]
 
 		var table = new Table<Persona>(panel, Persona) => [
@@ -102,25 +94,30 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 			items <=> "oficios"
 			value <=> "nuevoOficio"
 			width = 150
+			bindEnabled(personaSeleccionada)
+			allowNull(false)
 		]
 
 		new Label(panelOficios).text = "Destreza"
 		new NumericField(panelOficios) => [
 			value <=> "nuevoOficio.gradoDestreza"
 			width = 50
+			bindEnabled(personaSeleccionada)
 		]
 
 		new Button(panel) => [
 			caption = "Agregar oficio"
-			onClick([modelObject.agregarOficio])
+			bindEnabled(personaSeleccionada)
+			onClick[modelObject.agregarOficio]
 		]
 		
-		val elementSelected = new NotNullObservable("relacionSeleccionada")
+		val oficioSeleccionado = new NotNullObservable("oficioSeleccionado")
 
 		new Button(panel) => [
 			caption = "Eliminar oficio"
-			onClick([modelObject.eliminarOficio])
-			bindEnabled(elementSelected)
+			bindEnabled(oficioSeleccionado)
+			onClick[modelObject.eliminarOficio]
+		]
 
 		var table = new Table<Oficio>(panel, Oficio) => [
 			numberVisibleRows = 5
@@ -129,10 +126,8 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 		]
 
 		table.buildColumn("Nombre", 200, "nombre")
-
 		table.buildColumn("Grado de destreza", 20, "gradoDestreza")
-		
-		]
+
 	}
 
 	def void createRelacionesPanel(Panel panel) {
@@ -145,24 +140,29 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 			items <=> "relaciones"
 			value <=> "nuevaRelacion.persona"
 			width = 150
+			allowNull(false)
+			bindEnabled(personaSeleccionada)
 		]
 
 		new Label(panelRelaciones).text = "Es fiel"
 		new CheckBox(panelRelaciones) => [
 			value <=> "nuevaRelacion.esFiel"
 			width = 50
+			bindEnabled(personaSeleccionada)
 		]
-		
+
 		new Button(panel) => [
 			caption = "Agregar relación"
-			onClick([modelObject.agregarRelacion])
+			bindEnabled(personaSeleccionada)
+			onClick[modelObject.agregarRelacion]
 		]
+
+		val relacionSeleccionada = new NotNullObservable("relacionSeleccionada")
 		
-		val elementSelected = new NotNullObservable("relacionSeleccionada")
 		new Button(panel) => [
 			caption = "Eliminar relación"
-			onClick([modelObject.eliminarRelacion])
-			bindEnabled(elementSelected)
+			bindEnabled(relacionSeleccionada)
+			onClick[modelObject.eliminarRelacion]
 		]
 
 		var table = new Table<Relacion>(panel, Relacion) => [
@@ -173,9 +173,9 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 
 		table.buildColumn("Persona", 200, "persona")
 
-		table.buildColumn("Fiel", 100).bindContentsToProperty("esFiel").transformer = [ boolean esFiel |
-			if(esFiel) "Si" else "No"
-		]
+		table.buildColumn("Fiel", 100)
+			.bindContentsToProperty("esFiel")
+			.transformer = [ boolean esFiel | if (esFiel) "Si" else "No" ]
 
 	}
 
@@ -183,7 +183,7 @@ class PersonasWindow extends SimpleWindow<PersonasModel> {
 
 		new Button(panel) => [
 			caption = "Salir"
-			onClick( [close])
+			onClick [close]
 		]
 
 	}

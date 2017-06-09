@@ -12,7 +12,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 
 	def void saveOrUpdate(Persona persona) {
 		val transaction = openTransaction
-		
+
 		try {
 			var Node nodoPersona = null
 
@@ -24,6 +24,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 			}
 
 			updatePersona(persona, nodoPersona)
+
 			transaction.success
 		} finally {
 			transaction.close
@@ -33,7 +34,7 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 	def Persona getByExample(Persona persona) {
 		val transaction = openTransaction
 		var Persona entity = null
-		
+
 		try {
 			var Node nodoPersona = null
 
@@ -51,17 +52,19 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 	def List<Persona> searchByExample(Persona persona) {
 		val transaction = openTransaction
 		var personas = newArrayList
-		
+
 		try {
-			val params = "n.nombre = '" + persona.nombre + "' OR n.fechaNacimiento = '" + persona.fechaNacimiento + "'"
-			val nodos = getNodosBy(params)
-			personas.addAll(nodos.asList)
-			
+			val byNombre = "n.nombre =~ '(?i).*" + persona.nombre + ".*'"
+			val byFechaNacimiento = "n.fechaNacimiento =~ '(?i).*" + persona.fechaNacimiento + ".*'"
+			val params = byNombre + " OR " + byFechaNacimiento
+	
+			personas.addAll(getNodosBy(params).asList)
+
 			transaction.success
 		} finally {
 			transaction.close
 		}
-		
+
 		personas
 	}
 
@@ -69,25 +72,27 @@ class RepoPersonas extends RepoNeo4J<Persona> {
 		nodePersona => [
 			setProperty("nombre", persona.nombre)
 			setProperty("fechaNacimiento", persona.fechaNacimiento)
-			
-			getRelationships(RelacionesPersona.TRABAJA_DE).forEach[it.delete]
-			
-			persona.oficios.forEach[oficio |
+
+			relationships.forEach[delete]
+
+			persona.oficios.forEach [ oficio |
 				val Node nodoOficio = graphDb.getNodeById(oficio.id)
-				nodePersona.createRelationshipTo(nodoOficio, RelacionesPersona.TRABAJA_DE)
-				.setProperty("gradoDestreza", oficio.gradoDestreza as long)
+								
+				nodePersona
+					.createRelationshipTo(nodoOficio, RelacionesPersona.TRABAJA_DE)
+					.setProperty("gradoDestreza", oficio.gradoDestreza as long)		
 			]
-			
-			getRelationships(RelacionesPersona.SALE_CON).forEach[it.delete]
-			
-			persona.relaciones.forEach[relacion |
+
+			persona.relaciones.forEach [ relacion |	
 				val Node nodoRelacion = graphDb.getNodeById(relacion.persona.id)
-				nodePersona.createRelationshipTo(nodoRelacion, RelacionesPersona.SALE_CON)
-				.setProperty("esFiel", relacion.esFiel as boolean)
+				
+				nodePersona
+					.createRelationshipTo(nodoRelacion, RelacionesPersona.SALE_CON)
+					.setProperty("esFiel", relacion.esFiel as boolean)			
 			]
 		]
 	}
-	
+
 	override label() {
 		Label.label("Persona")
 	}

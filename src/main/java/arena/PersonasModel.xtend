@@ -3,10 +3,8 @@ package arena
 import domain.Oficio
 import domain.Persona
 import domain.Relacion
-import helpers.ErrorHelper
 import java.util.List
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.uqbar.commons.model.UserException
 import org.uqbar.commons.utils.ApplicationContext
 import org.uqbar.commons.utils.Observable
 import repos.RepoOficios
@@ -42,40 +40,40 @@ class PersonasModel {
 
 		oficios = repoOficios.allInstances
 		initOficio
+
+		initParams
 	}
 
 	def cargarPersonas() {
 		personas = repoPersonas.allInstances
 		relaciones = repoPersonas.allInstances
-		personaSeleccionada = new Persona
 		initRelacion
 	}
 
 	def void actualizarPersona() {
-		try {
-			personaSeleccionada => [
-				it.nombre = nombre
-				it.fechaNacimiento = fecha
-				it.validar
-			]
-
-			repoPersonas.saveOrUpdate(personaSeleccionada)
-
-			cargarPersonas
-		} catch (Exception e) {
-			throw new UserException(e.message)
+		if ( personaSeleccionada == null ){
+			personaSeleccionada = new Persona
 		}
+		
+		personaSeleccionada => [
+			it.nombre = nombre
+			it.fechaNacimiento = fecha
+			it.validar
+		]
+
+		updatePersona
+		cargarPersonas
 	}
 
 	def void buscarPersona() {
-		
 		val example = new Persona => [
 			it.nombre = nombre
-			fechaNacimiento = fecha
+			it.fechaNacimiento = fecha
 		]
 
 		personas = repoPersonas.searchByExample(example)
-
+		
+		personaSeleccionada = null
 	}
 
 	def void setPersonaSeleccionada(Persona persona) {
@@ -85,57 +83,34 @@ class PersonasModel {
 			fecha = persona.fechaNacimiento
 		} else {
 			personaSeleccionada = null
-			nombre = ""
-			fecha = ""
+			initParams
 		}
 	}
 
 	def void agregarOficio() {
-		execute([prepareAgregarOficio]);
-		firePropertyChanged(this, "personaSeleccionada")
-	}
-	def void prepareAgregarOficio() {
-		personaSeleccionada => [
-			it.validarSeleccionado
-			it.oficios.add(nuevoOficio)
-		]
-		repoPersonas.saveOrUpdate(personaSeleccionada)
+		nuevoOficio.validar
+		personaSeleccionada.addOficio(nuevoOficio)
+		
+		updatePersona
 	}
 
 	def void eliminarOficio() {
-		execute([prepareEliminarOficio])
-		firePropertyChanged(this, "personaSeleccionada")
-	}
-	def void prepareEliminarOficio() {
-		personaSeleccionada => [
-			it.validarSeleccionado
-			it.oficios.remove(oficioSeleccionado)
-		]
-		repoPersonas.saveOrUpdate(personaSeleccionada)
+		personaSeleccionada.removeOficio(oficioSeleccionado)
+		
+		updatePersona
 	}
 
 	def void agregarRelacion() {
-		try {
-			personaSeleccionada => [
-				it.relaciones.add(nuevaRelacion)
-			]
-			repoPersonas.saveOrUpdate(personaSeleccionada)
-			firePropertyChanged(this, "personaSeleccionada")
-		} catch (Exception e) {
-			throw new UserException(e.message)
-		}
+		nuevaRelacion.validar
+		personaSeleccionada.addRelacion(nuevaRelacion)
+		
+		updatePersona
 	}
 
 	def void eliminarRelacion() {
-		try {
-			personaSeleccionada => [
-				it.relaciones.remove(relacionSeleccionada)
-			]
-			repoPersonas.saveOrUpdate(personaSeleccionada)
-			firePropertyChanged(this, "personaSeleccionada")
-		} catch (Exception e) {
-			throw new UserException(e.message)
-		}
+		personaSeleccionada.removeRelacion(relacionSeleccionada)
+		
+		updatePersona
 	}
 
 	def void initRelacion() {
@@ -146,13 +121,13 @@ class PersonasModel {
 		nuevoOficio = new Oficio
 	}
 
-	def void validar() {
-		if (personaSeleccionada == null) {
-			throw new Exception("Debes seleccionar una persona")
-		}
+	def void initParams() {
+		nombre = ""
+		fecha = ""
 	}
 
-	def void execute(()=>void funcion) {
-		ErrorHelper.capturarUserError(funcion);
+	def void updatePersona() {
+		repoPersonas.saveOrUpdate(personaSeleccionada)
+		firePropertyChanged(this, "personaSeleccionada")
 	}
 }
