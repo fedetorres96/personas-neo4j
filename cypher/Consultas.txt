@@ -16,23 +16,10 @@
 	WHERE trabajaDe.gradoDestreza = 9 OR trabajaDe.gradoDestreza =10
 	RETURN persona
     
-5. saber quiénes son hipócritas: están saliendo con más de 1 persona pero se
-consideran fieles
-	
-	MATCH (persona:Persona)-[saleCon:SALE_CON]->
-	(personaUno:Persona), (personaDos:Persona)
-	WHERE saleCon.esFiel = false AND persona.nombre = "Wanda Nara"
-								 AND personaUno.nombre = "Maximiliano Lopez"
-								 AND personaDos.nombre = "Mauro Icardi"
-	RETURN persona,personaUno,personaDos
-	
-	MATCH (persona:Persona)-[saleCon:SALE_CON{ esFiel: false }]->(otraPersona:Persona),(tercerPersona:Persona)
-	RETURN persona,otraPersona,tercerPersona
-
-	MATCH (persona:Persona)-[saleCon:SALE_CON]->(otraPersona:Persona)
-	WHERE saleCon.esFiel = false 
-	RETURN persona,otraPersona
-
+5. saber quiénes son hipócritas: están saliendo con más de 1 persona pero se consideran fieles
+	MATCH (persona:Persona)
+	WHERE SIZE((persona)-[:SALE_CON{ esFiel: true }]->()) > 1
+	RETURN persona
 
 
 
